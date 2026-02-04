@@ -1,0 +1,152 @@
+spring:
+  application:
+    name: enterprise-rag
+  
+  # PostgreSQL configuration
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ragdb
+    username: raguser
+    password: ragpass123
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  
+  # JPA/Hibernate configuration
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate  # Don't auto-create tables (use init-db.sql)
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+  
+  # Redis configuration
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 4
+          min-idle: 2
+  
+  # RabbitMQ configuration
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: raguser
+    password: ragpass123
+    listener:
+      simple:
+        concurrency: 2
+        max-concurrency: 5
+        acknowledge-mode: auto
+  
+  # File upload configuration
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+      enabled: true
+  
+  # Security
+  security:
+    jwt:
+      secret: your-secret-key-change-this-in-production-min-256-bits
+      expiration: 86400000  # 24 hours in milliseconds
+
+# Server configuration
+server:
+  port: 8080
+  compression:
+    enabled: true
+    mime-types: application/json,text/html,text/plain,text/css
+  
+# Logging configuration
+logging:
+  level:
+    root: INFO
+    com.rag: DEBUG
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# Application-specific configuration
+rag:
+  # Chunking settings
+  chunking:
+    max-chunk-size: 1000  # tokens
+    overlap: 200          # tokens
+    
+  # Embedding settings
+  embedding:
+    model: all-MiniLM-L6-v2
+    dimension: 384
+    batch-size: 10
+    
+  # Ollama settings
+  ollama:
+    base-url: http://localhost:11434
+    model: llama3.2:3b  # Smaller model, faster, less RAM
+    timeout: 60000  # 60 seconds (Llama 3.2 is faster)
+    temperature: 0.7
+    max-tokens: 256  # Shorter responses to save memory
+    
+  # Retrieval settings
+  retrieval:
+    top-k: 5
+    similarity-threshold: 0.7
+    
+  # Cache settings
+  cache:
+    ttl: 900  # 15 minutes
+    max-size: 1000
+    
+  # Rate limiting (per user)
+  rate-limit:
+    queries-per-hour: 60
+    uploads-per-hour: 10
+
+# Spring AI configuration
+spring.ai:
+  ollama:
+    base-url: http://localhost:11434
+    chat:
+      model: llama3.2:3b  # Lightweight model for limited RAM
+      options:
+        temperature: 0.7
+        top-p: 0.9
+        num-predict: 256  # Shorter responses
+  
+  vectorstore:
+    pgvector:
+      index-type: IVFFLAT
+      distance-type: COSINE_DISTANCE
+      dimensions: 384
+
+# Management endpoints (for health checks and monitoring)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true
