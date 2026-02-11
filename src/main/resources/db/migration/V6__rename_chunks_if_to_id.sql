@@ -1,0 +1,2 @@
+ALTER TABLE chunks
+RENAME COLUMN "if" TO id;
