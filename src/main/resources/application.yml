@@ -156,3 +156,20 @@ management:
     export:
       prometheus:
         enabled: true
+
+# file upload security
+ 
+app:
+  upload:
+    max-file-size: 50
+    allowed-mime-types: 
+      - application/pdf
+      - application/vnd.openxmlformats-officedocument.wordprocessingml.document
+      - application/msword 
+      - text/plain
+    allowed-extensions:
+      - pdf 
+      - docx 
+      - doc 
+      - txt 
+  
