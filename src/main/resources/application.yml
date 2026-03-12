@@ -49,6 +49,11 @@ spring:
   
   # RabbitMQ configuration
   rabbitmq:
+    document:
+      initial-consumers: 3
+      max-consumers: 10
+      prefetch-count: 1 
+      message-ttl-ms: 8640000  # 24 hours in milliseconds
     host: localhost
     port: 5672
     username: raguser
@@ -172,4 +177,9 @@ app:
       - docx 
       - doc 
       - txt 
+
+
+storage:
+  upload-dir: /tmp/rag-uploads  # dev
+  # upload-dir: /mnt/rag-uploads  # prod
   

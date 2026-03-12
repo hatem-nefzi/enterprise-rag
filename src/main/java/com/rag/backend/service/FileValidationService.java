@@ -92,5 +92,14 @@ public class FileValidationService {
     }
 
 
+    public String getDetectedMimeType(MultipartFile file) {
+        try {
+            return tika.detect(file.getInputStream());
+        } catch (IOException e) {
+            throw new FileValidationException("Could not detect MIME type");
+        }
+    }
+
+
     
 }
